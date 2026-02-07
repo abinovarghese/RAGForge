@@ -240,6 +240,62 @@ export default function SettingsPanel({ open, onClose }: Props) {
               </div>
             </div>
 
+            {/* Pipeline Features */}
+            <div className="pt-2 border-t border-border">
+              <p className="text-sm font-medium mb-3">Pipeline Features</p>
+              <div className="space-y-3">
+                {[
+                  {
+                    key: "use_hybrid_search" as const,
+                    label: "Hybrid Search (BM25 + Vector)",
+                    description:
+                      "Combines keyword-based BM25 with vector similarity for better recall",
+                  },
+                  {
+                    key: "use_multi_query" as const,
+                    label: "Multi-Query Retrieval",
+                    description:
+                      "Generates alternate query phrasings to retrieve more relevant documents",
+                  },
+                  {
+                    key: "use_hyde" as const,
+                    label: "HyDE (Hypothetical Document Embeddings)",
+                    description:
+                      "Generates a hypothetical answer first, then uses it to find similar documents",
+                  },
+                  {
+                    key: "use_reranking" as const,
+                    label: "Reranking (CrossEncoder)",
+                    description:
+                      "Re-scores retrieved documents with a cross-encoder model for higher precision",
+                  },
+                ].map((toggle) => (
+                  <label
+                    key={toggle.key}
+                    className="flex items-start gap-3 cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={settings[toggle.key]}
+                      onChange={(e) =>
+                        setSettings({
+                          ...settings,
+                          [toggle.key]: e.target.checked,
+                        })
+                      }
+                      className="mt-1 h-4 w-4 rounded border-border accent-primary"
+                    />
+                    <div>
+                      <p className="text-sm font-medium">{toggle.label}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {toggle.description}
+                      </p>
+                    </div>
+                  </label>
+                ))}
+              </div>
+            </div>
+
             <button
               onClick={handleSave}
               disabled={saving}

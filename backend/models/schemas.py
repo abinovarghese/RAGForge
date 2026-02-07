@@ -107,6 +107,10 @@ class SettingsOut(BaseModel):
     rerank_top_k: int
     bm25_weight: float
     vector_weight: float
+    use_hybrid_search: bool
+    use_multi_query: bool
+    use_hyde: bool
+    use_reranking: bool
 
 
 class SettingsUpdate(BaseModel):
@@ -125,3 +129,7 @@ class SettingsUpdate(BaseModel):
     rerank_top_k: Optional[int] = None
     bm25_weight: Optional[float] = None
     vector_weight: Optional[float] = None
+    use_hybrid_search: Optional[bool] = None
+    use_multi_query: Optional[bool] = None
+    use_hyde: Optional[bool] = None
+    use_reranking: Optional[bool] = None

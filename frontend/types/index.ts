@@ -65,6 +65,10 @@ export interface Settings {
   rerank_top_k: number;
   bm25_weight: number;
   vector_weight: number;
+  use_hybrid_search: boolean;
+  use_multi_query: boolean;
+  use_hyde: boolean;
+  use_reranking: boolean;
 }
 
 export interface ChatResponse {

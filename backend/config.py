@@ -38,6 +38,12 @@ class Settings(BaseSettings):
     bm25_weight: float = 0.4
     vector_weight: float = 0.6
 
+    # Pipeline toggles
+    use_hybrid_search: bool = False
+    use_multi_query: bool = False
+    use_hyde: bool = False
+    use_reranking: bool = True
+
     model_config = {"env_file": ".env", "extra": "ignore"}
 
 

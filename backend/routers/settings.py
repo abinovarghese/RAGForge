@@ -17,6 +17,10 @@ async def get_settings():
         rerank_top_k=settings.rerank_top_k,
         bm25_weight=settings.bm25_weight,
         vector_weight=settings.vector_weight,
+        use_hybrid_search=settings.use_hybrid_search,
+        use_multi_query=settings.use_multi_query,
+        use_hyde=settings.use_hyde,
+        use_reranking=settings.use_reranking,
     )
 
 
