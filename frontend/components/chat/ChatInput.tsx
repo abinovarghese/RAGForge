@@ -38,7 +38,7 @@ export default function ChatInput({ onSend, disabled }: Props) {
   };
 
   return (
-    <div className="flex items-end gap-2 border border-border rounded-2xl bg-card px-4 py-2 shadow-sm">
+    <div className="flex items-end gap-2 border border-border rounded-2xl bg-card px-4 py-2 shadow-sm hover:border-muted-foreground/40 focus-within:ring-2 focus-within:ring-primary/30 focus-within:border-primary/50 transition-all">
       <textarea
         ref={textareaRef}
         value={text}
@@ -50,10 +50,19 @@ export default function ChatInput({ onSend, disabled }: Props) {
         disabled={disabled}
         className="flex-1 resize-none bg-transparent text-sm outline-none placeholder:text-muted-foreground min-h-[24px] max-h-[150px] py-1"
       />
+      {text.length > 0 && (
+        <span className="text-xs text-muted-foreground self-end pb-1.5 shrink-0">
+          {text.length}
+        </span>
+      )}
       <button
         onClick={handleSubmit}
         disabled={disabled || !text.trim()}
-        className="p-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 transition-colors shrink-0"
+        className={`p-2 rounded-xl transition-colors shrink-0 ${
+          text.trim()
+            ? "bg-primary text-primary-foreground hover:bg-primary/90"
+            : "bg-muted text-muted-foreground"
+        } disabled:opacity-40`}
       >
         <Send size={18} />
       </button>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, PanelLeftClose, PanelLeft } from "lucide-react";
+import { Plus, PanelLeftClose, PanelLeft, MessageSquare } from "lucide-react";
 import type { Conversation } from "@/types";
 import ConversationItem from "./ConversationItem";
 
@@ -50,7 +50,7 @@ export default function Sidebar({
           <button
             onClick={onNew}
             className="p-1.5 rounded-lg hover:bg-muted transition-colors"
-            title="New Chat"
+            title="New Chat (⌘N)"
           >
             <Plus size={18} />
           </button>
@@ -65,9 +65,10 @@ export default function Sidebar({
       </div>
       <div className="flex-1 overflow-y-auto p-2 space-y-1">
         {conversations.length === 0 && (
-          <p className="text-xs text-muted-foreground text-center py-4">
-            No conversations yet
-          </p>
+          <div className="flex flex-col items-center gap-2 py-8 text-muted-foreground">
+            <MessageSquare size={24} strokeWidth={1.5} />
+            <p className="text-xs text-center">No conversations yet</p>
+          </div>
         )}
         {conversations.map((conv) => (
           <ConversationItem

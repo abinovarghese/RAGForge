@@ -15,10 +15,11 @@ import ChatPanel from "@/components/chat/ChatPanel";
 import DataSourcesPanel from "@/components/documents/DataSourcesPanel";
 import SettingsPanel from "@/components/settings/SettingsPanel";
 import ThemeToggle from "@/components/ui/ThemeToggle";
+import { ToastProvider, useToast } from "@/components/ui/Toast";
 
 type Panel = "chat" | "docs";
 
-export default function Home() {
+function HomeContent() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeConvId, setActiveConvId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -29,6 +30,7 @@ export default function Home() {
   const [streamingContent, setStreamingContent] = useState("");
 
   const ws = useWebSocket();
+  const toast = useToast();
 
   // Load initial data
   useEffect(() => {
@@ -69,6 +71,23 @@ export default function Home() {
     },
     [activeConvId]
   );
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey) {
+        if (e.key === "n") {
+          e.preventDefault();
+          handleNewChat();
+        } else if (e.key === "d") {
+          e.preventDefault();
+          setPanel((p) => (p === "docs" ? "chat" : "docs"));
+        }
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [handleNewChat]);
 
   const handleSend = useCallback(
     async (text: string) => {
@@ -115,6 +134,7 @@ export default function Home() {
         refreshConversations();
       } catch (e) {
         console.error(e);
+        toast.error("Failed to get a response. Please try again.");
         const errorMsg: Message = {
           id: `err-${Date.now()}`,
           role: "assistant",
@@ -127,8 +147,10 @@ export default function Home() {
         setStreamingContent("");
       }
     },
-    [activeConvId, ws, refreshConversations]
+    [activeConvId, ws, refreshConversations, toast]
   );
+
+
 
   return (
     <div className="h-screen flex flex-col">
@@ -146,7 +168,7 @@ export default function Home() {
                 ? "bg-primary/10 text-primary"
                 : "hover:bg-muted"
             }`}
-            title="Documents"
+            title="Documents (⌘D)"
           >
             <FileText size={20} />
           </button>
@@ -192,5 +214,13 @@ export default function Home() {
 
       <SettingsPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <ToastProvider>
+      <HomeContent />
+    </ToastProvider>
   );
 }

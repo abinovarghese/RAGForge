@@ -57,6 +57,12 @@ export default function DataSourcesPanel({ onDocumentsChanged }: Props) {
         {TABS.map((t) => {
           const Icon = t.icon;
           const active = tab === t.key;
+          const count =
+            t.key === "files"
+              ? documents.filter((d) => d.source_type === "file").length
+              : t.key === "urls"
+                ? documents.filter((d) => d.source_type === "url").length
+                : connectors.length;
           return (
             <button
               key={t.key}
@@ -69,6 +75,17 @@ export default function DataSourcesPanel({ onDocumentsChanged }: Props) {
             >
               <Icon size={16} />
               {t.label}
+              {count > 0 && (
+                <span
+                  className={`ml-1 text-xs px-1.5 py-0.5 rounded-full ${
+                    active
+                      ? "bg-primary/10 text-primary"
+                      : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  {count}
+                </span>
+              )}
             </button>
           );
         })}

@@ -5,6 +5,7 @@ import { Upload, X, Link } from "lucide-react";
 import { uploadDocuments, ingestURL } from "@/lib/api";
 import type { Document } from "@/types";
 import { useIngestionSocket } from "@/lib/useIngestionSocket";
+import { useToast } from "@/components/ui/Toast";
 
 interface Props {
   onUploaded: () => void;
@@ -62,6 +63,7 @@ export default function DocumentUpload({ onUploaded, mode = "file" }: Props) {
     { docId: string; name: string }[]
   >([]);
   const fileRef = useRef<HTMLInputElement>(null);
+  const toast = useToast();
 
   const handleFiles = useCallback(
     async (files: FileList | File[]) => {
@@ -73,15 +75,17 @@ export default function DocumentUpload({ onUploaded, mode = "file" }: Props) {
           ...prev,
           ...docs.map((d) => ({ docId: d.id, name: d.filename })),
         ]);
+        toast.success(`${docs.length} file${docs.length > 1 ? "s" : ""} uploaded successfully.`);
         // Refresh after a delay to let processing start
         setTimeout(onUploaded, 500);
       } catch (e: any) {
+        toast.error(e.message || "Upload failed");
         setError(e.message || "Upload failed");
       } finally {
         setUploading(false);
       }
     },
-    [onUploaded]
+    [onUploaded, toast]
   );
 
   const handleDrop = useCallback(
@@ -104,8 +108,10 @@ export default function DocumentUpload({ onUploaded, mode = "file" }: Props) {
         { docId: doc.id, name: doc.filename },
       ]);
       setUrlInput("");
+      toast.success("URL ingested successfully.");
       setTimeout(onUploaded, 500);
     } catch (e: any) {
+      toast.error(e.message || "URL ingestion failed");
       setError(e.message || "URL ingestion failed");
     } finally {
       setUploading(false);

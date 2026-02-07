@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect } from "react";
-import { MessageSquare } from "lucide-react";
+import { FileSearch, Lightbulb, GitCompareArrows, Sparkles } from "lucide-react";
 import type { Message } from "@/types";
 import MessageBubble from "./MessageBubble";
 import ChatInput from "./ChatInput";
@@ -30,13 +30,53 @@ export default function ChatPanel({
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
         {messages.length === 0 && !isLoading && (
-          <div className="flex flex-col items-center justify-center h-full text-muted-foreground gap-4">
-            <MessageSquare size={48} strokeWidth={1.5} />
-            <div className="text-center space-y-1">
-              <p className="text-lg font-medium">Start a conversation</p>
-              <p className="text-sm">
+          <div className="flex flex-col items-center justify-center h-full gap-6">
+            <div className="flex flex-col items-center gap-2">
+              <Sparkles size={40} className="text-primary" strokeWidth={1.5} />
+              <h2 className="text-xl font-semibold text-foreground">
+                What would you like to explore?
+              </h2>
+              <p className="text-sm text-muted-foreground">
                 Upload documents, then ask questions about them
               </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg w-full">
+              {[
+                {
+                  icon: FileSearch,
+                  text: "Summarize my uploaded documents",
+                  desc: "Get a concise overview of your data",
+                },
+                {
+                  icon: Lightbulb,
+                  text: "What are the key topics in my data?",
+                  desc: "Discover themes and patterns",
+                },
+                {
+                  icon: GitCompareArrows,
+                  text: "Compare information across sources",
+                  desc: "Find similarities and differences",
+                },
+              ].map((card) => (
+                <button
+                  key={card.text}
+                  onClick={() => onSend(card.text)}
+                  className="card-hover flex items-start gap-3 p-4 rounded-xl border border-border bg-card text-left hover:border-primary/40 transition-colors"
+                >
+                  <card.icon
+                    size={20}
+                    className="text-primary shrink-0 mt-0.5"
+                  />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">
+                      {card.text}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {card.desc}
+                    </p>
+                  </div>
+                </button>
+              ))}
             </div>
           </div>
         )}
