@@ -38,6 +38,7 @@ class DocumentOut(BaseModel):
 
 class URLIngestRequest(BaseModel):
     url: str
+    deep_crawl: bool = False
 
 
 class IngestionEvent(BaseModel):

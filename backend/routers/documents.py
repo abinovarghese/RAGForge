@@ -85,7 +85,7 @@ async def ingest_url(request: URLIngestRequest):
         )
         await db.commit()
 
-    asyncio.create_task(process_url_async(doc_id, request.url))
+    asyncio.create_task(process_url_async(doc_id, request.url, deep_crawl=request.deep_crawl))
 
     return DocumentOut(
         id=doc_id,

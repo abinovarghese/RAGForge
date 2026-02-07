@@ -97,13 +97,20 @@ async def process_document_async(doc_id: str, file_path: str, filename: str, fil
         await queue.put(None)
 
 
-async def process_url_async(doc_id: str, url: str):
+async def process_url_async(doc_id: str, url: str, deep_crawl: bool = False):
     """Async URL ingestion with progress events."""
-    from ingestion.loader import load_url
+    from ingestion.loader import load_url, load_url_recursive
     try:
-        await _push(doc_id, "loading", 10, "Fetching URL...")
-        await _update_doc(doc_id, status="processing", progress=10)
-        docs = await asyncio.to_thread(load_url, url)
+        if deep_crawl:
+            await _push(doc_id, "crawling", 5, "Crawling website links...")
+            await _update_doc(doc_id, status="processing", progress=5)
+            docs = await asyncio.to_thread(load_url_recursive, url)
+            await _push(doc_id, "loading", 10, f"Crawled {len(docs)} pages")
+            await _update_doc(doc_id, progress=10)
+        else:
+            await _push(doc_id, "loading", 10, "Fetching URL...")
+            await _update_doc(doc_id, status="processing", progress=10)
+            docs = await asyncio.to_thread(load_url, url)
 
         await _push(doc_id, "chunking", 40, "Splitting into chunks...")
         await _update_doc(doc_id, progress=40)

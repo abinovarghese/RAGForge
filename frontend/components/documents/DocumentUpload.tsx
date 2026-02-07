@@ -17,6 +17,7 @@ function IngestionProgressBar({ docId }: { docId: string }) {
   if (!event) return null;
 
   const stageLabels: Record<string, string> = {
+    crawling: "Crawling",
     loading: "Loading",
     chunking: "Chunking",
     embedding: "Embedding",
@@ -58,6 +59,7 @@ export default function DocumentUpload({ onUploaded, mode = "file" }: Props) {
   const [dragging, setDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [urlInput, setUrlInput] = useState("");
+  const [deepCrawl, setDeepCrawl] = useState(false);
   const [error, setError] = useState("");
   const [activeUploads, setActiveUploads] = useState<
     { docId: string; name: string }[]
@@ -102,7 +104,7 @@ export default function DocumentUpload({ onUploaded, mode = "file" }: Props) {
     setError("");
     setUploading(true);
     try {
-      const doc = await ingestURL(urlInput.trim());
+      const doc = await ingestURL(urlInput.trim(), deepCrawl);
       setActiveUploads((prev) => [
         ...prev,
         { docId: doc.id, name: doc.filename },
@@ -156,26 +158,42 @@ export default function DocumentUpload({ onUploaded, mode = "file" }: Props) {
       )}
 
       {mode === "url" && (
-        <div className="flex gap-2">
-          <div className="flex items-center gap-2 flex-1 border border-border rounded-lg px-3 py-2">
-            <Link size={16} className="text-muted-foreground shrink-0" />
-            <input
-              type="url"
-              value={urlInput}
-              onChange={(e) => setUrlInput(e.target.value)}
-              placeholder="Paste a URL to ingest..."
-              className="flex-1 text-sm bg-transparent outline-none"
-              onKeyDown={(e) => e.key === "Enter" && handleURL()}
-            />
+        <>
+          <div className="flex gap-2">
+            <div className="flex items-center gap-2 flex-1 border border-border rounded-lg px-3 py-2">
+              <Link size={16} className="text-muted-foreground shrink-0" />
+              <input
+                type="url"
+                value={urlInput}
+                onChange={(e) => setUrlInput(e.target.value)}
+                placeholder="Paste a URL to ingest..."
+                className="flex-1 text-sm bg-transparent outline-none"
+                onKeyDown={(e) => e.key === "Enter" && handleURL()}
+              />
+            </div>
+            <button
+              onClick={handleURL}
+              disabled={!urlInput.trim() || uploading}
+              className="px-4 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-40 transition-colors"
+            >
+              Ingest
+            </button>
           </div>
-          <button
-            onClick={handleURL}
-            disabled={!urlInput.trim() || uploading}
-            className="px-4 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-40 transition-colors"
-          >
-            Ingest
-          </button>
-        </div>
+          <label className="flex items-start gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={deepCrawl}
+              onChange={(e) => setDeepCrawl(e.target.checked)}
+              className="mt-0.5 rounded border-border"
+            />
+            <div>
+              <span className="text-sm font-medium">Deep crawl (follow sublinks)</span>
+              <p className="text-xs text-muted-foreground">
+                Recursively crawls linked pages on the same domain
+              </p>
+            </div>
+          </label>
+        </>
       )}
 
       {/* Per-file progress bars */}

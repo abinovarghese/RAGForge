@@ -47,10 +47,10 @@ export async function uploadDocuments(files: File[]): Promise<Document[]> {
   return res.json();
 }
 
-export async function ingestURL(url: string): Promise<Document> {
+export async function ingestURL(url: string, deepCrawl = false): Promise<Document> {
   return fetchJSON("/api/documents/url", {
     method: "POST",
-    body: JSON.stringify({ url }),
+    body: JSON.stringify({ url, deep_crawl: deepCrawl }),
   });
 }
 

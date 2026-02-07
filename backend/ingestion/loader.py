@@ -49,3 +49,17 @@ def load_url(url: str) -> list[Document]:
     for doc in docs:
         doc.metadata["source_file"] = url
     return docs
+
+
+def load_url_recursive(url: str, max_depth: int = 2) -> list[Document]:
+    from langchain_community.document_loaders.recursive_url_loader import RecursiveUrlLoader
+
+    loader = RecursiveUrlLoader(
+        url=url,
+        max_depth=max_depth,
+        prevent_outside=True,
+    )
+    docs = loader.load()
+    for doc in docs:
+        doc.metadata["source_file"] = doc.metadata.get("source", url)
+    return docs
